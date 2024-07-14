@@ -1,10 +1,11 @@
-// Show device and HSW mockup. Disable for printing.
 /* [Preferences] */
+// Show device and HSW mockup. Disable for printing.
 Preview = true;
 
-Device_Width = 190.00;
-Device_Height = 120.00;
-Device_Thickness = 20.50;
+Device_Width = 169.5;
+Device_Height = 240;
+Device_Thickness = 7.5;
+// Gap between holder and device, so its not too tight
 Device_Clearance = 0.5;
 
 Bottom_Left = true;
@@ -30,8 +31,8 @@ Clamp_Angle = 0;
 
 // Empty HSW insert is 20mm.
 Hex_Insert_Size=20;
-// Subtracted from Hex_Insert_Size for tolerance.
-Hex_Insert_Tolerance = 0.5;
+// Subtracted from Hex Insert Size for tolerance.
+Hex_Insert_Tolerance = 0.0;
 // Depth of the HSW insert. 8mm works for empty insert.
 Hex_Insert_Depth=8;
 
@@ -46,10 +47,10 @@ $corner_vertical_offset = (Device_Height % $hsw_insert_vertical_distance) / 2;
 $hsw_cells_horizontal = floor(Device_Width / $hsw_insert_horizontal_distance);
 $hsw_cells_vertical = floor(Device_Height / $hsw_insert_vertical_distance);
 
-horizontal_spacing = $corner_horizontal_offset + hexagon_radius(Hex_Insert_Size);
-vertical_spacing = $corner_vertical_offset + Hex_Insert_Size;
+$horizontal_spacing = $corner_horizontal_offset + hexagon_radius(Hex_Insert_Size);
+$vertical_spacing = $corner_vertical_offset + Hex_Insert_Size;
 
-$part_layout_spacing = max(horizontal_spacing, vertical_spacing) + 5;
+$part_layout_spacing = max($horizontal_spacing, $vertical_spacing) + 5;
 
 color("orange") {
     if (Bottom_Left)
@@ -230,15 +231,13 @@ module edge_bottom(x, y) {
         }
         edge(offset=-($corner_vertical_offset + Holder_Thickness + Device_Clearance));
     }
-    }
+}
 
 module edge_top(x, y) {
     x = x == undef ? round($hsw_cells_horizontal / 2) * $hsw_insert_horizontal_distance : x;
     y = y == undef ? floor(Device_Height / $hsw_insert_vertical_distance) * $hsw_insert_vertical_distance : y;
-    echo(x, y);
     mirror([0,1,0]) 
         edge_bottom(x, y=-y);
-//        edge_bottom(y = -floor(Device_Height / $hsw_insert_vertical_distance) * $hsw_insert_vertical_distance);
 }
 
 module edge_left(x=0, y) {
