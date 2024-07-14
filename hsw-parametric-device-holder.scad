@@ -136,9 +136,9 @@ module hex_backplate() {
     cylinder(h=Back_Thickness, r=hex_radius, $fn=6);
 
 }
-module rect_backplate(extrude_offset) {
+module rect_backplate(extrude_offset, corner=true) {
     translate([-Holder_Thickness, 0, 0])
-    cube([Holder_Thickness + extrude_offset + Device_Clearance, Holder_Width, Back_Thickness]);
+    cube([Holder_Thickness + extrude_offset + Device_Clearance, Holder_Width + (corner ? Holder_Thickness : 0), Back_Thickness]);
 
 }
 // hex insert
@@ -172,14 +172,14 @@ module corner_bottom_left(x, y) {
         translate_to_corner(z_plane =  Back_Thickness) {
             linear_extrude(height=Device_Thickness + Device_Clearance*2)
 
-            corner_outline(width = Holder_Width, height = Holder_Width, thickness=Holder_Thickness);
+            corner_outline(width = Holder_Width + Holder_Thickness, height = Holder_Width + Holder_Thickness, thickness=Holder_Thickness);
         }
 
         // lip
         translate_to_corner(z_plane = Back_Thickness + Device_Thickness + Device_Clearance*2) {
             linear_extrude(height=Lip_Thickness)
             translate([Lip_Size, Lip_Size, 0])
-            corner_outline(width = Holder_Width, height = Holder_Width, thickness=Holder_Thickness+Lip_Size);
+            corner_outline(width = Holder_Width + Holder_Thickness, height = Holder_Width + Holder_Thickness, thickness=Holder_Thickness+Lip_Size);
         }
     }
 }
@@ -227,7 +227,7 @@ module edge_bottom(x, y) {
         union() {
             hex_backplate();
             translate([-Holder_Width/2,0,0])
-              rotate(-90) rect_backplate(extrude_offset=$corner_vertical_offset + Holder_Thickness);
+              rotate(-90) rect_backplate(extrude_offset=$corner_vertical_offset + Holder_Thickness, corner=false);
         }
         edge(offset=-($corner_vertical_offset + Holder_Thickness + Device_Clearance));
     }
@@ -249,7 +249,7 @@ module edge_left(x=0, y) {
         union() {
             hex_backplate();
             translate([0,-Holder_Width/2,0])
-                mirror([1,0,0]) rect_backplate(extrude_offset=$corner_horizontal_offset + Holder_Thickness);
+                mirror([1,0,0]) rect_backplate(extrude_offset=$corner_horizontal_offset + Holder_Thickness, corner=false);
         }
         rotate(-90) 
             edge(offset=-($corner_horizontal_offset + Holder_Thickness + Device_Clearance));
